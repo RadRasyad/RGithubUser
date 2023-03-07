@@ -1,0 +1,19 @@
+<resources>
+    <string name="app_name">RGithubUser</string>
+
+    <string name="search">Search</string>
+    <string name="search_hint">Search</string>
+    <string name="content_desc_user_img">User Image</string>
+    <string name="favorite_button">Favorite Button</string>
+    <string name="to_show_building_as_company">company icon</string>
+    <string name="to_showicon_as_location">Location Icon</string>
+    <string name="value_placeholder">0</string>
+    <string name="following">Following</string>
+    <string name="follower">Followers</string>
+    <string name="repository">Repository</string>
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="tab_folowing">Following</string>
+    <string name="tab_follower">Followers</string>
+    <string name="empty_state_msg">Ops its empty here</string>
+
+</resources>
