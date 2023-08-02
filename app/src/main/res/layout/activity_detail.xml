@@ -245,6 +245,6 @@
         app:layout_anchorGravity="bottom|end"
         android:contentDescription="@string/favorite_button"
         app:iconTint="?attr/colorOnPrimaryContainer"
-        app:srcCompat="@drawable/ic_favorite_fill" />
+        app:srcCompat="@drawable/ic_favorite_outline" />
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

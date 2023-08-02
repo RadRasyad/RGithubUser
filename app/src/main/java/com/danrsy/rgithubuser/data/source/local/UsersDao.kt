@@ -17,4 +17,7 @@ interface UsersDao {
 
     @Delete
     suspend fun deleteFavoriteUser(user: User)
+
+    @Query("SELECT count(*) FROM users WHERE users.id = :id")
+    suspend fun checkIfExist(id: Int): Int
 }

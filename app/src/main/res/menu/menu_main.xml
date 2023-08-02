@@ -2,11 +2,27 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context="com.danrsy.rgithubuser.ui.MainActivity">
+
     <item
-        android:id="@+id/search"
+        android:id="@+id/action_search"
         android:icon="@drawable/ic_search_white"
         android:iconTint="?attr/colorOnSurface"
         android:title="@string/search"
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="collapseActionView|always" />
+
+    <item
+        android:id="@+id/action_favorite"
+        android:icon="@drawable/ic_favorite_fill"
+        android:iconTint="?attr/colorOnSurface"
+        android:title="@string/favorite"
+        app:showAsAction="collapseActionView|ifRoom" />
+
+    <item
+        android:id="@+id/action_setting"
+        android:icon="@drawable/ic_settings"
+        android:iconTint="?attr/colorOnSurface"
+        android:title="@string/setting"
+        app:showAsAction="collapseActionView" />
+
 </menu>

@@ -2,11 +2,15 @@ package com.danrsy.rgithubuser.ui
 
 import android.app.SearchManager
 import android.content.Context
+import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import android.view.Menu
+import android.view.MenuItem
 import android.view.View
+import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.ViewModelProvider
@@ -15,10 +19,14 @@ import com.danrsy.rgithubuser.R
 import com.danrsy.rgithubuser.data.model.User
 import com.danrsy.rgithubuser.databinding.ActivityMainBinding
 import com.danrsy.rgithubuser.ui.common.UsersAdapter
+import com.danrsy.rgithubuser.ui.favorite.FavoriteActivity
+import com.danrsy.rgithubuser.ui.setting.SettingActivity
+import com.danrsy.rgithubuser.ui.setting.SettingViewModel
 
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mainViewModel: MainViewModel
+    private val settingViewModel: SettingViewModel by viewModels()
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UsersAdapter
 
@@ -30,6 +38,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
+        initTheme()
         mainViewModel = ViewModelProvider(this@MainActivity, ViewModelProvider.NewInstanceFactory())[MainViewModel::class.java]
         mainViewModel.userList.observe(this) { userList ->
             if (userList!=null) {
@@ -56,7 +65,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu): Boolean {
         menuInflater.inflate(R.menu.menu_main, menu)
         val searchManager = getSystemService(Context.SEARCH_SERVICE) as SearchManager
-        val searchView = menu.findItem(R.id.search).actionView as SearchView
+        val searchView = menu.findItem(R.id.action_search).actionView as SearchView
 
         searchView.setSearchableInfo(searchManager.getSearchableInfo(componentName))
         searchView.queryHint = resources.getString(R.string.search_hint)
@@ -75,6 +84,24 @@ class MainActivity : AppCompatActivity() {
         })
 
         return true
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        return when (item.itemId) {
+
+            R.id.action_favorite -> {
+                val mFavorite = Intent(this, FavoriteActivity::class.java)
+                startActivity(mFavorite)
+                true
+            }
+
+            R.id.action_setting -> {
+                val mSetting = Intent(this, SettingActivity::class.java)
+                startActivity(mSetting)
+                true
+            }
+            else -> super.onOptionsItemSelected(item)
+        }
     }
 
     private fun populateData(data : List<User>) {
@@ -102,6 +129,25 @@ class MainActivity : AppCompatActivity() {
             rvUser.visibility = if (state) View.GONE else View.VISIBLE
             errorState.root.visibility = if (state) View.VISIBLE else View.GONE
             emptyState.massage.text = msg
+        }
+    }
+
+    private fun initTheme() {
+        settingViewModel.getThemeSettings().observe(this) { theme: Int ->
+            when (theme) {
+                0 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
+                    settingViewModel.saveThemeSetting(0)
+                }
+                1 -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
+                    settingViewModel.saveThemeSetting(1)
+                }
+                else -> {
+                    AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+                    settingViewModel.saveThemeSetting(2)
+                }
+            }
         }
     }
 

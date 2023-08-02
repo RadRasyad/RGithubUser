@@ -11,9 +11,15 @@
     <string name="following">Following</string>
     <string name="follower">Followers</string>
     <string name="repository">Repository</string>
-    <!-- TODO: Remove or change this placeholder text -->
     <string name="tab_folowing">Following</string>
     <string name="tab_follower">Followers</string>
     <string name="empty_state_msg">Ops its empty here</string>
+    <string name="favorite">Favorite</string>
+    <string name="setting">Setting</string>
+    <string name="theme_title">Theme</string>
+    <string name="theme_mode_default">Default</string>
+    <string name="theme_mode_light">Light</string>
+    <string name="theme_mode_dark">Dark</string>
+    <string name="ok">OK</string>
 
 </resources>

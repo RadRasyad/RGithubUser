@@ -33,8 +33,6 @@ class FollowersViewModel : ViewModel() {
             ) {
                 if (response.isSuccessful) {
                     listUser.value = response.body()
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
                 }
                 _isLoading.value = false
             }

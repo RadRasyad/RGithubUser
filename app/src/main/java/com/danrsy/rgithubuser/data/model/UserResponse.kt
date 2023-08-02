@@ -8,8 +8,6 @@ import com.google.gson.annotations.SerializedName
 data class UserResponse(
     @field:SerializedName("total_count")
     val totalCount: Int?,
-    @field:SerializedName("incomplete_results")
-    var incompleteResults: Boolean?,
     var items: ArrayList<User>
 )
 
@@ -44,10 +42,6 @@ data class User(
     @field:SerializedName("location")
     @ColumnInfo(name = "location")
     val location: String? = null,
-
-    @field:SerializedName("email")
-    @ColumnInfo(name = "email")
-    val email: String? = null,
 
     @field:SerializedName("public_repos")
     @ColumnInfo(name = "repository")

@@ -6,29 +6,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
-import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danrsy.rgithubuser.data.model.User
 import com.danrsy.rgithubuser.databinding.FragmentFollowingBinding
 import com.danrsy.rgithubuser.ui.common.UsersAdapter
-
 
 class FollowingFragment : Fragment() {
 
     private var _binding: FragmentFollowingBinding? = null
     private val binding get() = _binding
 
-    private val viewModel by viewModels<FollowingViewModel>()
+    private lateinit var viewModel: FollowingViewModel
     private lateinit var adapter: UsersAdapter
-
-    private var username: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            username = it.getString(KEY_BUNDLE)
-        }
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -41,6 +31,7 @@ class FollowingFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(requireActivity())[FollowingViewModel::class.java]
         viewModel.getListFollowing().observe(viewLifecycleOwner) {
             if (it.size>0) {
                 populateData(it)
@@ -90,15 +81,4 @@ class FollowingFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
-        private const val KEY_BUNDLE = "USERNAME"
-
-        fun getInstance(username: String): Fragment {
-            return FollowingFragment().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_BUNDLE, username)
-                }
-            }
-        }
-    }
 }

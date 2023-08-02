@@ -7,29 +7,20 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.viewModels
+import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danrsy.rgithubuser.data.model.User
 import com.danrsy.rgithubuser.databinding.FragmentFollowersBinding
 import com.danrsy.rgithubuser.ui.common.UsersAdapter
-
+import com.danrsy.rgithubuser.ui.following.FollowingViewModel
 
 class FollowersFragment : Fragment() {
 
     private var _binding: FragmentFollowersBinding? = null
     private val binding get() = _binding
 
-    private val viewModel by viewModels<FollowersViewModel>()
+    private lateinit var viewModel: FollowersViewModel
     private lateinit var adapter: UsersAdapter
-
-    private var username: String? = null
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        arguments?.let {
-            username = it.getString(KEY_BUNDLE)
-        }
-    }
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -41,9 +32,11 @@ class FollowersFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        viewModel = ViewModelProvider(requireActivity())[FollowersViewModel::class.java]
         viewModel.getListFollowers().observe(viewLifecycleOwner) {
+
+            populateData(it)
             if (it.size>0) {
-                populateData(it)
                 showEmptyState(false)
             } else {
                 showEmptyState(true)
@@ -90,15 +83,4 @@ class FollowersFragment : Fragment() {
         _binding = null
     }
 
-    companion object {
-        private const val KEY_BUNDLE = "USERNAME"
-
-        fun getInstance(username: String): Fragment {
-            return FollowersFragment().apply {
-                arguments = Bundle().apply {
-                    putString(KEY_BUNDLE, username)
-                }
-            }
-        }
-    }
 }

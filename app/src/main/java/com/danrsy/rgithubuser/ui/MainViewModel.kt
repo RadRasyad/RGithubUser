@@ -40,10 +40,6 @@ class MainViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _userList.value = response.body()
                     _isError.value = false
-                } else {
-                    _isError.value = true
-                    _errorMgs.value = response.message()
-                    Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }
 
@@ -70,8 +66,6 @@ class MainViewModel : ViewModel() {
                 if (response.isSuccessful) {
                     _isLoading.value = false
                     _userList.value = response.body()?.items
-                } else {
-                    Log.e(TAG, "onFailure: ${response.message()}")
                 }
             }
 
