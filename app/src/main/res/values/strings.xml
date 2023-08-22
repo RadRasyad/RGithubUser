@@ -11,7 +11,7 @@
     <string name="following">Following</string>
     <string name="follower">Followers</string>
     <string name="repository">Repository</string>
-    <string name="tab_folowing">Following</string>
+    <string name="tab_following">Following</string>
     <string name="tab_follower">Followers</string>
     <string name="empty_state_msg">Ops its empty here</string>
     <string name="favorite">Favorite</string>
@@ -21,5 +21,8 @@
     <string name="theme_mode_light">Light</string>
     <string name="theme_mode_dark">Dark</string>
     <string name="ok">OK</string>
+    <string name="favorite_add">Added to Favorites</string>
+    <string name="favorite_remove">Removed</string>
+    <string name="title_favorite">Favorite</string>
 
 </resources>

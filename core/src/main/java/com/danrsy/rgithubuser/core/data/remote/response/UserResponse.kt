@@ -1,18 +1,13 @@
-package com.danrsy.rgithubuser.data.model
+package com.danrsy.rgithubuser.core.data.remote.response
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
 import com.google.gson.annotations.SerializedName
 
-data class UserResponse(
-    @field:SerializedName("total_count")
-    val totalCount: Int?,
-    var items: ArrayList<User>
-)
 
 @Entity(tableName = "users")
-data class User(
+data class UserResponse(
 
     @field:SerializedName("id")
     @ColumnInfo(name = "id")

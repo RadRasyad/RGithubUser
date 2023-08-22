@@ -1,34 +1,31 @@
 package com.danrsy.rgithubuser.ui.detail
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
 import android.widget.Toast
-import androidx.activity.viewModels
 import androidx.annotation.StringRes
-import androidx.lifecycle.ViewModelProvider
+import androidx.appcompat.app.AppCompatActivity
 import androidx.viewpager2.widget.ViewPager2
 import coil.load
 import coil.transform.CircleCropTransformation
 import com.danrsy.rgithubuser.R
-import com.danrsy.rgithubuser.data.model.User
-import com.danrsy.rgithubuser.databinding.ActivityDetailBinding
+import com.danrsy.rgithubuser.core.domain.model.User
 import com.danrsy.rgithubuser.ui.common.SectionPagerAdapter
+import com.danrsy.rgithubuser.databinding.ActivityDetailBinding
 import com.danrsy.rgithubuser.ui.followers.FollowersViewModel
-import com.danrsy.rgithubuser.ui.following.FollowingViewModel
+import com.danrsy.rgithubuser.core.data.Resource
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class DetailActivity : AppCompatActivity() {
 
-    private lateinit var followingViewModel: FollowingViewModel
-    private lateinit var followersViewModel: FollowersViewModel
-    private val detailViewModel: DetailViewModel by viewModels()
+    private val detailViewModel: DetailViewModel by viewModel()
+    private val followersViewModel: FollowersViewModel by viewModel()
     private lateinit var binding: ActivityDetailBinding
+    private lateinit var user: User
+    private var isFavorite: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,67 +36,39 @@ class DetailActivity : AppCompatActivity() {
 
         val username = intent.getStringExtra(EXTRA_DATA)
 
-        initPageAdapter()
-
-        followersViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[FollowersViewModel::class.java]
-        followingViewModel = ViewModelProvider(
-            this,
-            ViewModelProvider.NewInstanceFactory()
-        )[FollowingViewModel::class.java]
-
         if (username != null) {
-            CoroutineScope(Dispatchers.Main).launch {
-                detailViewModel.getUserData(username).observe(this@DetailActivity) {user ->
-                    populateData(user)
 
-                    var isFavorite = false
-                    CoroutineScope(Dispatchers.Main).launch {
-                        val count = detailViewModel.checkUser(user.id)
-                        isFavorite = if (count > 0) {
-                            favoriteState(true)
-                            true
-                        } else {
-                            favoriteState(false)
-                            false
+            initPageAdapter(username)
+
+            detailViewModel.detailUsers(username).observe(this@DetailActivity) { value ->
+                when (value) {
+                    is Resource.Success -> {
+                        binding.fabFavorite.show()
+                        showLoadingState(false)
+                        showErrorMsg(false, "")
+                        value.data?.let { populateData(it) }
+                        user = value.data!!
+                        detailViewModel.getDetailState(username)?.observe(this) {
+                            isFavorite = it.isFavorite == true
+                            favoriteState(isFavorite)
                         }
                     }
 
-                    binding.fabFavorite.setOnClickListener {
-                        isFavorite = !isFavorite
-
-                        if (isFavorite) {
-                            detailViewModel.addToFavorite(user)
-                            Toast.makeText(
-                                this@DetailActivity, "Favorited",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        } else {
-                            detailViewModel.removeFromFavorite(user)
-                            Toast.makeText(
-                                this@DetailActivity, "Unfavorited",
-                                Toast.LENGTH_SHORT
-                            ).show()
-                        }
-                        favoriteState(isFavorite)
+                    is Resource.Loading -> {
+                        binding.fabFavorite.hide()
+                        showLoadingState(true)
+                        showErrorMsg(false, "")
                     }
 
+                    is Resource.Error -> {
+                        binding.fabFavorite.hide()
+                        showLoadingState(false)
+                        showErrorMsg(true, value.message.toString())
+                    }
                 }
-
-            }
-
-            followingViewModel.setListFollowing(username)
-            followersViewModel.setListFollowers(username)
-
-            detailViewModel.isLoading.observe(this) {
-                showLoadingState(it)
-            }
-
-            detailViewModel.isError.observe(this) { state ->
-                detailViewModel.errorMgs.observe(this) { msg ->
-                    showErrorMsg(state, msg)
+                favoriteState(isFavorite)
+                binding.fabFavorite.setOnClickListener {
+                    insertOrDeleteFav()
                 }
             }
         }
@@ -107,8 +76,8 @@ class DetailActivity : AppCompatActivity() {
 
     }
 
-    private fun initPageAdapter() {
-        val sectionsPagerAdapter = SectionPagerAdapter(this)
+    private fun initPageAdapter(username: String) {
+        val sectionsPagerAdapter = SectionPagerAdapter(this, username)
         val viewPager: ViewPager2 = binding.viewpager2
         viewPager.adapter = sectionsPagerAdapter
         val tabs: TabLayout = findViewById(R.id.detailtab)
@@ -149,8 +118,26 @@ class DetailActivity : AppCompatActivity() {
 
     private fun favoriteState(isFavorite: Boolean) {
         binding.fabFavorite.apply {
-            if(isFavorite) load(R.drawable.ic_favorite_fill)
+            if (isFavorite) load(R.drawable.ic_favorite_fill)
             else load(R.drawable.ic_favorite_outline)
+        }
+    }
+
+    private fun insertOrDeleteFav() {
+        if (!isFavorite) {
+            user.isFavorite = !isFavorite
+            detailViewModel.insertFavorite(user)
+            Toast.makeText(
+                this, R.string.favorite_add, Toast.LENGTH_SHORT
+            ).show()
+            isFavorite = !isFavorite
+        } else {
+            user.isFavorite = !isFavorite
+            detailViewModel.deleteFavorite(user)
+            Toast.makeText(
+                this, R.string.favorite_remove, Toast.LENGTH_SHORT
+            ).show()
+            isFavorite = !isFavorite
         }
     }
 
@@ -172,7 +159,7 @@ class DetailActivity : AppCompatActivity() {
         @StringRes
         private val TAB_TITLES = intArrayOf(
             R.string.tab_follower,
-            R.string.tab_folowing,
+            R.string.tab_following,
         )
     }
 }

@@ -1,23 +1,24 @@
-package com.danrsy.rgithubuser.ui.favorite
+package com.danrsy.favorite.ui
 
 
-import androidx.appcompat.app.AppCompatActivity
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
+import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.danrsy.favorite.di.favoriteModule
 import com.danrsy.rgithubuser.R
-import com.danrsy.rgithubuser.data.model.User
+import com.danrsy.rgithubuser.core.domain.model.User
+import com.danrsy.rgithubuser.core.ui.UsersAdapter
 import com.danrsy.rgithubuser.databinding.ActivityFavoriteBinding
-import com.danrsy.rgithubuser.ui.common.UsersAdapter
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.launch
+import com.danrsy.rgithubuser.ui.detail.DetailActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.context.loadKoinModules
 
 class FavoriteActivity : AppCompatActivity() {
 
-    private val viewModel: FavoriteViewModel by viewModels()
+    private val viewModel: FavoriteViewModel by viewModel()
     private lateinit var binding: ActivityFavoriteBinding
     private lateinit var adapter: UsersAdapter
 
@@ -25,6 +26,8 @@ class FavoriteActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityFavoriteBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        loadKoinModules(favoriteModule)
 
         setSupportActionBar(binding.toolbar)
         supportActionBar?.title = getString(R.string.favorite)
@@ -41,18 +44,26 @@ class FavoriteActivity : AppCompatActivity() {
     }
 
     private fun getData() {
-        CoroutineScope(Dispatchers.Main).launch {
+        viewModel.favoriteData.observe(this) { data ->
             showLoadingState(true)
-            viewModel.getAllFavorite()?.observe(this@FavoriteActivity) {
+            if (data.isNotEmpty()) {
+                populateData(data)
                 showLoadingState(false)
-                populateData(it)
-                if (it.isNotEmpty()) showEmptyState(false) else showEmptyState(true)
+            } else {
+                showEmptyState(true)
+                showLoadingState(false)
             }
         }
+
     }
 
     private fun populateData(data : List<User>) {
         adapter = UsersAdapter(data)
+        adapter.onItemClick = { selectedData ->
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.EXTRA_DATA, selectedData.login)
+            startActivity(intent)
+        }
         binding.apply {
             rvUser.layoutManager = LinearLayoutManager(this@FavoriteActivity)
             rvUser.setHasFixedSize(true)

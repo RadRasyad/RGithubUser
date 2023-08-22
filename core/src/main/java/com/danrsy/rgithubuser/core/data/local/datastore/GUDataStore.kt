@@ -1,6 +1,6 @@
-package com.danrsy.rgithubuser.data.source.datastore
+package com.danrsy.rgithubuser.core.data.local.datastore
 
-import android.annotation.SuppressLint
+
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
@@ -31,15 +31,4 @@ class GUDataStore(private val context: Context) {
         }
     }
 
-    companion object {
-        @SuppressLint("StaticFieldLeak")
-        @Volatile
-        private var mInstance: GUDataStore? = null
-
-        fun getInstance(context: Context): GUDataStore =
-            mInstance?: synchronized(this) {
-                val newInstance = mInstance?: GUDataStore(context).also { mInstance = it }
-                newInstance
-            }
-    }
 }

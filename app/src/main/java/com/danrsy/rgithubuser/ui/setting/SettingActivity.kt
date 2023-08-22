@@ -4,17 +4,17 @@ import android.annotation.SuppressLint
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import com.danrsy.rgithubuser.R
 import com.danrsy.rgithubuser.databinding.ActivitySettingBinding
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingActivity : AppCompatActivity() {
 
     private var checkedItem: Int = 2
     private lateinit var binding: ActivitySettingBinding
-    private val viewModel: SettingViewModel by viewModels()
+    private val settingViewModel: SettingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -46,7 +46,7 @@ class SettingActivity : AppCompatActivity() {
     }
 
     private fun initTheme() {
-        viewModel.getThemeSettings().observe(this) { theme: Int ->
+        settingViewModel.getThemeSettings().observe(this) { theme: Int ->
             checkedItem = when (theme) {
                 0 -> {
                     0
@@ -65,22 +65,21 @@ class SettingActivity : AppCompatActivity() {
 
         val singleItems = arrayOf("Light", "Dark", "Default")
 
-        viewModel.getThemeSettings().observe(this) { theme: Int ->
-            when (theme) {
+        settingViewModel.getThemeSettings().observe(this) { theme: Int ->
+            checkedItem = when (theme) {
                 0 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                    viewModel.saveThemeSetting(0)
-                    checkedItem = 0
+                    0
                 }
+
                 1 -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                    viewModel.saveThemeSetting(1)
-                    checkedItem = 1
+                    1
                 }
+
                 else -> {
                     AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                    viewModel.saveThemeSetting(2)
-                    checkedItem = 2
+                    2
                 }
             }
         }
@@ -107,19 +106,17 @@ class SettingActivity : AppCompatActivity() {
                 when(checkedItem) {
                     0 ->{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_NO)
-                        viewModel.saveThemeSetting(0)
+                        settingViewModel.saveThemeSetting(0)
                     }
                     1 ->{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_YES)
-                        viewModel.saveThemeSetting(1)
-
+                        settingViewModel.saveThemeSetting(1)
                     }
                     2 ->{
                         AppCompatDelegate.setDefaultNightMode(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
-                        viewModel.saveThemeSetting(2)
+                        settingViewModel.saveThemeSetting(2)
                     }
                 }
-
             }
             .show()
     }

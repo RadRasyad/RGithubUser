@@ -1,17 +1,17 @@
-package com.danrsy.rgithubuser.ui.common
+package com.danrsy.rgithubuser.core.ui
 
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
 import coil.load
 import coil.transform.CircleCropTransformation
-import com.danrsy.rgithubuser.R
-import com.danrsy.rgithubuser.data.model.User
-import com.danrsy.rgithubuser.databinding.UserItemRowBinding
-import com.danrsy.rgithubuser.ui.detail.DetailActivity
+import com.danrsy.rgithubuser.core.R
+import com.danrsy.rgithubuser.core.databinding.UserItemRowBinding
+import com.danrsy.rgithubuser.core.domain.model.User
 
 class UsersAdapter(private val listUser: List<User>) : RecyclerView.Adapter<UsersAdapter.UserViewHolder>() {
+
+    var onItemClick: ((User) -> Unit)? = null
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): UserViewHolder {
         val item = UserItemRowBinding.inflate(LayoutInflater.from(parent.context), parent, false)
@@ -36,10 +36,11 @@ class UsersAdapter(private val listUser: List<User>) : RecyclerView.Adapter<User
                 tvUsername.text = user.login
             }
 
-            itemView.setOnClickListener{
-                val intent = Intent(itemView.context, DetailActivity::class.java)
-                intent.putExtra(DetailActivity.EXTRA_DATA, user.login)
-                itemView.context.startActivity(intent)
+        }
+
+        init {
+            itemView.setOnClickListener {
+                onItemClick?.invoke(listUser[adapterPosition])
             }
         }
     }

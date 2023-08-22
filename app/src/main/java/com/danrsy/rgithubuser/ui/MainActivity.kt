@@ -3,61 +3,69 @@ package com.danrsy.rgithubuser.ui
 import android.app.SearchManager
 import android.content.Context
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.WindowCompat
 import android.view.Menu
 import android.view.MenuItem
 import android.view.View
-import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.appcompat.widget.SearchView
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.danrsy.rgithubuser.R
-import com.danrsy.rgithubuser.data.model.User
+import com.danrsy.rgithubuser.core.domain.model.User
 import com.danrsy.rgithubuser.databinding.ActivityMainBinding
-import com.danrsy.rgithubuser.ui.common.UsersAdapter
-import com.danrsy.rgithubuser.ui.favorite.FavoriteActivity
+import com.danrsy.rgithubuser.core.ui.UsersAdapter
 import com.danrsy.rgithubuser.ui.setting.SettingActivity
 import com.danrsy.rgithubuser.ui.setting.SettingViewModel
+import com.danrsy.rgithubuser.core.data.Resource
+import com.danrsy.rgithubuser.ui.detail.DetailActivity
+import org.koin.androidx.viewmodel.ext.android.viewModel
+import org.koin.core.context.loadKoinModules
 
 class MainActivity : AppCompatActivity() {
 
-    private lateinit var mainViewModel: MainViewModel
-    private val settingViewModel: SettingViewModel by viewModels()
+    private val mainViewModel: MainViewModel by viewModel()
+    private val settingViewModel: SettingViewModel by viewModel()
     private lateinit var binding: ActivityMainBinding
     private lateinit var adapter: UsersAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         WindowCompat.setDecorFitsSystemWindows(window, false)
         super.onCreate(savedInstanceState)
+
+        initTheme()
         installSplashScreen()
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         setSupportActionBar(binding.toolbar)
 
-        initTheme()
-        mainViewModel = ViewModelProvider(this@MainActivity, ViewModelProvider.NewInstanceFactory())[MainViewModel::class.java]
-        mainViewModel.userList.observe(this) { userList ->
+        mainViewModel.getUsers().observe(this) { userList ->
             if (userList!=null) {
-                if (userList.size>0) {
-                    populateData(userList)
-                    showEmptyState(false)
-                } else {
-                    showEmptyState(true)
+                when (userList) {
+                    is Resource.Success -> {
+                        if (userList.data?.isEmpty() == true) {
+                            showEmptyState(true)
+                        } else {
+                            userList.data?.let { populateData(it) }
+                            showEmptyState(false)
+                        }
+                        showLoadingState(false)
+                        showErrorMsg(false,"")
+                    }
+                    is Resource.Loading -> {
+                        showErrorMsg(false,"")
+                        showLoadingState(true)
+                        showEmptyState(false)
+                    }
+                    is Resource.Error -> {
+                        showErrorMsg(true, userList.message)
+                        showEmptyState(false)
+                        showLoadingState(false)
+                    }
                 }
-            }
-        }
-
-        mainViewModel.isLoading.observe(this) {
-            showLoadingState(it)
-        }
-
-        mainViewModel.isError.observe(this) { state ->
-            mainViewModel.errorMgs.observe(this) { msg ->
-                showErrorMsg(state, msg)
             }
         }
     }
@@ -72,7 +80,7 @@ class MainActivity : AppCompatActivity() {
         searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
 
             override fun onQueryTextSubmit(query: String): Boolean {
-                mainViewModel.getSearchUsers(query)
+                getSearchUsers(query)
                 searchView.clearFocus()
                 return true
             }
@@ -90,8 +98,8 @@ class MainActivity : AppCompatActivity() {
         return when (item.itemId) {
 
             R.id.action_favorite -> {
-                val mFavorite = Intent(this, FavoriteActivity::class.java)
-                startActivity(mFavorite)
+                val uri = Uri.parse("rgithubuser://favorite")
+                startActivity(Intent(Intent.ACTION_VIEW, uri))
                 true
             }
 
@@ -104,8 +112,42 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
+    private fun getSearchUsers(username: String) {
+        mainViewModel.getSearchUsers(username).observe(this) { userList ->
+            if (userList!=null) {
+                when (userList) {
+                    is Resource.Success -> {
+                        if (userList.data?.isEmpty() == true) {
+                            showEmptyState(true)
+                        } else {
+                            userList.data?.let { populateData(it) }
+                            showEmptyState(false)
+                        }
+                        showLoadingState(false)
+                        showErrorMsg(false,"")
+                    }
+                    is Resource.Loading -> {
+                        showErrorMsg(false,"")
+                        showLoadingState(true)
+                        showEmptyState(false)
+                    }
+                    is Resource.Error -> {
+                        showErrorMsg(true, userList.message)
+                        showEmptyState(false)
+                        showLoadingState(false)
+                    }
+                }
+            }
+        }
+    }
+
     private fun populateData(data : List<User>) {
         adapter = UsersAdapter(data)
+        adapter.onItemClick = { selectedData ->
+            val intent = Intent(this, DetailActivity::class.java)
+            intent.putExtra(DetailActivity.EXTRA_DATA, selectedData.login)
+            startActivity(intent)
+        }
         binding.apply {
             rvUser.layoutManager = LinearLayoutManager(this@MainActivity)
             rvUser.setHasFixedSize(true)

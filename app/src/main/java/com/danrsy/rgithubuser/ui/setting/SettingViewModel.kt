@@ -1,24 +1,22 @@
 package com.danrsy.rgithubuser.ui.setting
 
-import android.app.Application
-import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
+import androidx.lifecycle.ViewModel
 import androidx.lifecycle.asLiveData
 import androidx.lifecycle.viewModelScope
-import com.danrsy.rgithubuser.data.source.GURepository
+import com.danrsy.rgithubuser.core.domain.usecase.GUUseCase
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class SettingViewModel(application: Application) : AndroidViewModel(application) {
+class SettingViewModel(private val guUseCase: GUUseCase) : ViewModel() {
 
-    private val repository = GURepository(application)
 
     fun getThemeSettings(): LiveData<Int> {
-        return repository.getThemeSetting().asLiveData(Dispatchers.IO)
+        return guUseCase.getThemeSetting().asLiveData(Dispatchers.IO)
     }
 
     fun saveThemeSetting(theme: Int) = viewModelScope.launch {
-        repository.saveThemeSetting(theme)
+        guUseCase.saveThemeSetting(theme)
     }
 
 }

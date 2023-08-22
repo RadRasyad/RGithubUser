@@ -1,9 +1,8 @@
-package com.danrsy.rgithubuser.data.source.network
+package com.danrsy.rgithubuser.core.data.remote.network
 
-import com.danrsy.rgithubuser.BuildConfig
-import com.danrsy.rgithubuser.data.model.User
-import com.danrsy.rgithubuser.data.model.UserResponse
-import retrofit2.Call
+import com.danrsy.rgithubuser.core.BuildConfig
+import com.danrsy.rgithubuser.core.data.remote.response.ListUserResponse
+import com.danrsy.rgithubuser.core.data.remote.response.UserResponse
 import retrofit2.http.GET
 import retrofit2.http.Headers
 import retrofit2.http.Path
@@ -13,31 +12,31 @@ interface ApiService {
 
     @GET("users")
     @Headers("Authorization: token $secret")
-    fun getUsers(): Call<ArrayList<User>>
+    suspend fun getUsers(): ArrayList<UserResponse>
 
     @GET("search/users")
     @Headers("Authorization: token $secret")
-    fun getSearchUsers(
+    suspend fun getSearchUsers(
         @Query(value = "q") query: String
-    ): Call<UserResponse>
+    ): ListUserResponse
 
     @GET("users/{username}")
     @Headers("Authorization: token $secret")
-    fun getUserDetail(
+    suspend fun getUserDetail(
         @Path("username") username: String
-    ): Call<User>
+    ): UserResponse
 
     @GET("users/{username}/followers")
     @Headers("Authorization: token $secret")
-    fun getFollowers(
+    suspend fun getFollowers(
         @Path("username") username: String
-    ): Call<ArrayList<User>>
+    ): ArrayList<UserResponse>
 
     @GET("users/{username}/following")
     @Headers("Authorization: token $secret")
-    fun getFollowing(
+    suspend fun getFollowing(
         @Path("username") username: String
-    ): Call<ArrayList<User>>
+    ): ArrayList<UserResponse>
 
     companion object {
         const val secret = BuildConfig.KEY

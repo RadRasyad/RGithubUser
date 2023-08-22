@@ -1,10 +1,11 @@
 plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
-    id 'kotlin-kapt'
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.devtools.ksp'
+    id 'kotlin-parcelize'
 }
+apply from: '../shared_dependencies.gradle'
 
 android {
     namespace 'com.danrsy.rgithubuser'
@@ -17,7 +18,6 @@ android {
         versionCode 1
         versionName "1.0"
 
-        buildConfigField ("String" , "KEY", apiKey)
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -37,34 +37,41 @@ android {
     buildFeatures {
         viewBinding true
     }
+    dynamicFeatures = [':favorite']
 }
 
 dependencies {
+    implementation project(":core")
 
-    implementation 'androidx.core:core-ktx:1.10.1'
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'com.google.android.material:material:1.9.0'
-    implementation 'androidx.constraintlayout:constraintlayout:2.1.4'
-    implementation 'androidx.navigation:navigation-fragment-ktx:2.6.0'
-    implementation 'androidx.navigation:navigation-ui-ktx:2.6.0'
-    implementation 'com.airbnb.android:lottie:5.0.3'
-    implementation 'io.coil-kt:coil:2.2.2'
-    implementation 'androidx.core:core-splashscreen:1.0.1'
+    implementation "androidx.core:core-ktx:$core_ktx_version"
+    implementation "androidx.appcompat:appcompat:$appcompat_version"
+    implementation "com.google.android.material:material:$material_version"
+    implementation "androidx.constraintlayout:constraintlayout:$constraint_version"
 
-    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.6.1'
-    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.6.1'
+    implementation "com.airbnb.android:lottie:$lottie_version"
+    implementation "io.coil-kt:coil:$coil_version"
+    implementation "androidx.core:core-splashscreen:$splashscreen_version"
 
-    implementation 'com.squareup.retrofit2:retrofit:2.9.0'
-    implementation 'com.squareup.retrofit2:converter-gson:2.9.0'
-    implementation 'com.squareup.okhttp3:logging-interceptor:4.9.0'
+    implementation "androidx.navigation:navigation-fragment-ktx:$navigation_version"
+    implementation "androidx.navigation:navigation-ui-ktx:$navigation_version"
 
-    implementation 'androidx.room:room-runtime:2.5.2'
-    implementation 'com.google.android.gms:play-services-maps:18.1.0'
-    ksp 'androidx.room:room-compiler:2.5.2'
-    implementation "androidx.room:room-ktx:2.5.2"
-    implementation "androidx.datastore:datastore-preferences:1.0.0"
+    implementation "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version"
+    implementation "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version"
 
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "com.squareup.retrofit2:retrofit:$retrofit_version"
+    implementation "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    implementation "com.squareup.okhttp3:logging-interceptor:$logging_interceptor_version"
+
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "com.google.android.gms:play-services-maps:$gms_play_service_maps_version"
+    ksp "androidx.room:room-compiler:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    implementation "androidx.datastore:datastore-preferences:$data_store_version"
+
+    implementation "io.insert-koin:koin-core:$koin_version"
+    implementation "io.insert-koin:koin-android:$koin_version"
+
+    testImplementation "junit:junit:$junit_version"
+    androidTestImplementation "androidx.test.ext:junit:$androidx_junit_version"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$espresso_version"
 }
