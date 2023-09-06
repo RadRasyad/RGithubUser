@@ -4,15 +4,9 @@ plugins {
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin'
     id 'com.google.devtools.ksp'
     id 'kotlin-parcelize'
-    id 'com.squareup.leakcanary.deobfuscation'
 }
 apply from: '../shared_dependencies.gradle'
 
-leakCanary {
-    filterObfuscatedVariants { variant ->
-        variant.name == "debug"
-    }
-}
 
 android {
     namespace 'com.danrsy.rgithubuser.core'
