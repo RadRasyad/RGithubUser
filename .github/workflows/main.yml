@@ -16,7 +16,9 @@ jobs:
       - name: Set up Java
         uses: actions/setup-java@v2
         with:
-          java-version: 18  # Specify your desired Java version
+          java-version: '18'
+          distribution: 'temurin'
+          cache: gradle
 
       - name: Download Dependencies
         run: |
