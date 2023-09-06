@@ -1,4 +1,27 @@
-ths:
+version: 2.1
+
+orbs:
+  android: circleci/android@0.2.1
+
+jobs:
+  build:
+    executor: android/android
+    environment:
+      JVM_OPTS: -Xmx3200m
+      JAVA_HOME: /usr/local/openjdk-17
+    steps:
+      - checkout
+      - restore_cache:
+          key: android-orb-v1-
+      - run:
+          name: Chmod permissions
+          command: sudo chmod +x ./gradlew
+      - run:
+          name: Download Dependencies
+          command: ./gradlew androidDependencies
+      - save_cache:
+          key: 'android-orb-v1-{{ epoch }}'
+          paths:
             - ~/.android/build-cache
             - ~/.android/cache
       - run:
