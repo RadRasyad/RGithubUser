@@ -1,0 +1,58 @@
+name: Android Build and Test
+
+on:
+  push:
+    branches:
+      - made-2  # Change this to your main branch name
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up Java
+        uses: actions/setup-java@v2
+        with:
+          java-version: 18  # Specify your desired Java version
+
+      - name: Download Dependencies
+        run: |
+          chmod +x ./gradlew
+          ./gradlew androidDependencies
+
+      - name: Cache Gradle dependencies
+        uses: actions/cache@v2
+        with:
+          path: |
+            ~/.android/build-cache
+            ~/.android/cache
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build
+        run: ./gradlew build
+
+      - name: Store Build Reports
+        uses: actions/upload-artifact@v2
+        with:
+          name: reports
+          path: app/build/reports
+
+      - name: Run Tests
+        run: ./gradlew lint test
+
+      - name: Store Test Results
+        uses: actions/upload-artifact@v2
+        with:
+          name: test-results
+          path: app/build/test-results
+
+      - name: Store Debug APK
+        uses: actions/upload-artifact@v2
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/
