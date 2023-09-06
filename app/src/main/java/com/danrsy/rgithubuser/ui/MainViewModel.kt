@@ -12,8 +12,5 @@ class MainViewModel(private val guUseCase: GUUseCase) : ViewModel() {
     fun getUsers() = guUseCase.getAllUsers().asLiveData()
     fun getSearchUsers(query: String) = guUseCase.getSearchUsers(query).asLiveData()
 
-    companion object {
-        private const val TAG = "MainViewModel"
-    }
 
 }

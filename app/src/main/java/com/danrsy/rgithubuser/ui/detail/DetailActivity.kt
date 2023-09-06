@@ -22,7 +22,6 @@ import org.koin.androidx.viewmodel.ext.android.viewModel
 class DetailActivity : AppCompatActivity() {
 
     private val detailViewModel: DetailViewModel by viewModel()
-    private val followersViewModel: FollowersViewModel by viewModel()
     private lateinit var binding: ActivityDetailBinding
     private lateinit var user: User
     private var isFavorite: Boolean = false

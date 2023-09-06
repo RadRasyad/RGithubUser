@@ -26,12 +26,18 @@ buildscript {
     ext.junit_version = "4.13.2"
     ext.androidx_junit_version = "1.1.5"
     ext.espresso_version = "3.5.1"
+
+    ext.leak_canary_version = "2.12"
+
+    ext.database_sqlcipher_version = "4.4.0"
+    ext.sqlite_ktx_version = "2.3.1"
 }
 plugins {
     id 'com.android.application' version '8.1.0' apply false
     id 'com.android.library' version '8.1.0' apply false
     id 'org.jetbrains.kotlin.android' version '1.8.0' apply false
     id 'com.google.android.libraries.mapsplatform.secrets-gradle-plugin' version '2.0.1' apply false
-    id("com.google.devtools.ksp") version "1.8.10-1.0.9" apply false
+    id 'com.google.devtools.ksp' version "1.8.10-1.0.9" apply false
     id 'com.android.dynamic-feature' version '8.1.0' apply false
+    id 'com.squareup.leakcanary.deobfuscation' version '2.8.1' apply false
 }

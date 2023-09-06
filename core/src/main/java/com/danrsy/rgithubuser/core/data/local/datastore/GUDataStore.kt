@@ -12,8 +12,9 @@ import kotlinx.coroutines.flow.map
 
 class GUDataStore(private val context: Context) {
 
+    private val themeSetting = "theme_setting"
     private val dataStoreName = "GU_DATASTORE"
-    private val THEME_KEY = intPreferencesKey("theme_setting")
+    private val THEME_KEY = intPreferencesKey(themeSetting)
 
     private val Context.userPreferenceDataStore: DataStore<Preferences> by preferencesDataStore(
         name = dataStoreName

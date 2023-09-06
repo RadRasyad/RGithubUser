@@ -23,7 +23,6 @@ import com.danrsy.rgithubuser.ui.setting.SettingViewModel
 import com.danrsy.rgithubuser.core.data.Resource
 import com.danrsy.rgithubuser.ui.detail.DetailActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.context.loadKoinModules
 
 class MainActivity : AppCompatActivity() {
 
