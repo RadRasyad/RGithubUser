@@ -4,7 +4,6 @@ orbs:
   android: circleci/android@2.3.0
 
 workflows:
-  test:
     jobs:
       build:
         executor: android/android-machine
