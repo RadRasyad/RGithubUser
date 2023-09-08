@@ -7,11 +7,11 @@ import android.view.MenuItem
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.danrsy.favorite.databinding.ActivityFavoriteBinding
 import com.danrsy.favorite.di.favoriteModule
 import com.danrsy.rgithubuser.R
 import com.danrsy.rgithubuser.core.domain.model.User
 import com.danrsy.rgithubuser.core.ui.UsersAdapter
-import com.danrsy.rgithubuser.databinding.ActivityFavoriteBinding
 import com.danrsy.rgithubuser.ui.detail.DetailActivity
 import org.koin.androidx.viewmodel.ext.android.viewModel
 import org.koin.core.context.loadKoinModules

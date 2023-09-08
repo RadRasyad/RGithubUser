@@ -2,7 +2,6 @@ package com.danrsy.rgithubuser.ui.followers
 
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -45,7 +44,6 @@ class FollowersFragment : Fragment() {
                             if (user.data?.isEmpty() == true) {
                                 showEmptyState(true)
                             } else {
-                                Log.d("followers", user.data?.size.toString())
                                 user.data?.let { populateData(it) }
                                 showEmptyState(false)
                             }

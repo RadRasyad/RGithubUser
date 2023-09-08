@@ -13,7 +13,6 @@ import com.danrsy.rgithubuser.R
 import com.danrsy.rgithubuser.core.domain.model.User
 import com.danrsy.rgithubuser.ui.common.SectionPagerAdapter
 import com.danrsy.rgithubuser.databinding.ActivityDetailBinding
-import com.danrsy.rgithubuser.ui.followers.FollowersViewModel
 import com.danrsy.rgithubuser.core.data.Resource
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
